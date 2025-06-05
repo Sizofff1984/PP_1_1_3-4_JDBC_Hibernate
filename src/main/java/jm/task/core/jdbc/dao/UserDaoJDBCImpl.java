@@ -7,23 +7,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserDaoJDBCImpl implements UserDao, AutoCloseable {
-    private final Connection connection;
-
-    public UserDaoJDBCImpl() {
-        try {
-            this.connection = new Util().getConnection();
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Failed to initialize database connection", e);
-        }
-    }
-
-    @Override
-    public void close() throws Exception {
-        if (connection != null && !connection.isClosed()) {
-            connection.close();
-        }
-    }
+public class UserDaoJDBCImpl implements UserDao {
+    private final Connection connection = new Util().getConnection();
 
     public void createUsersTable() {
         try (Statement statement = connection.createStatement()) {
@@ -58,8 +43,7 @@ public class UserDaoJDBCImpl implements UserDao, AutoCloseable {
     }
 
     public void removeUserById(long id) {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(
-                "DELETE FROM users WHERE id = ?")) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM users WHERE id = ?")) {
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {

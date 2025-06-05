@@ -13,10 +13,8 @@ public class Util {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             return DriverManager.getConnection(URL, USERNAME, PASSWORD);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Failed to load MySQL JDBC driver", e);
-        } catch (SQLException e) {
-            throw new RuntimeException("DB connection error. Verify server/credentials/database", e);
+        } catch (ClassNotFoundException | SQLException e) {
+            throw new RuntimeException("Error during DB connection setup", e);
         }
     }
 }
