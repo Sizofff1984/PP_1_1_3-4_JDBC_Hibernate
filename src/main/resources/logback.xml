@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration>
+<configuration debug="true">
 
-    <!-- Отключаем INFO логи от Hibernate -->
+    <!-- Отладка: покажет, загружается ли файл -->
+    <statusListener class="ch.qos.logback.core.status.OnConsoleStatusListener"/>
+
+    <!-- Отключаем DEBUG логи от Hibernate -->
     <logger name="org.hibernate" level="WARN"/>
+    <logger name="org.jboss.logging" level="WARN"/>
 
     <!-- Консольный вывод -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
