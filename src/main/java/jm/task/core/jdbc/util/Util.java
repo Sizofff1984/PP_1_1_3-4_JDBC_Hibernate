@@ -17,37 +17,39 @@ public class Util {
     private static final String USERNAME = "Sizofff1984";
     private static final String PASSWORD = "V!ctoria19891906";
 
-    private static SessionFactory sessionFactory;
+    private final SessionFactory sessionFactory;
 
-    public static SessionFactory getHibernateSessionFactory() {
-        if (sessionFactory == null) {
-            try {
-                Configuration configuration = new Configuration();
+    public Util() {
+        this.sessionFactory = buildSessionFactory();
+    }
 
-                Properties settings = new Properties();
-                settings.put(Environment.DRIVER, "com.mysql.cj.jdbc.Driver");
-                settings.put(Environment.URL, URL);
-                settings.put(Environment.USER, USERNAME);
-                settings.put(Environment.PASS, PASSWORD);
-                settings.put(Environment.DIALECT, "org.hibernate.dialect.MySQL8Dialect");
-                settings.put(Environment.SHOW_SQL, "true");
-                settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
-                settings.put(Environment.HBM2DDL_AUTO, "update"); // автоматическое обновление схемы
+    private SessionFactory buildSessionFactory() {
+        try {
+            Configuration configuration = new Configuration();
+            Properties settings = new Properties();
 
-                configuration.setProperties(settings);
+            settings.put(Environment.DRIVER, "com.mysql.cj.jdbc.Driver");
+            settings.put(Environment.URL, URL);
+            settings.put(Environment.USER, USERNAME);
+            settings.put(Environment.PASS, PASSWORD);
+            settings.put(Environment.DIALECT, "org.hibernate.dialect.MySQL8Dialect");
+            settings.put(Environment.SHOW_SQL, "true");
+            settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
+            settings.put(Environment.HBM2DDL_AUTO, "update");
 
-                // Регистрация сущностей
-                configuration.addAnnotatedClass(User.class);
+            configuration.setProperties(settings);
+            configuration.addAnnotatedClass(User.class);
 
-                ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
-                        .applySettings(configuration.getProperties()).build();
+            ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
+                    .applySettings(configuration.getProperties()).build();
 
-                sessionFactory = configuration.buildSessionFactory(serviceRegistry);
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw new RuntimeException("Ошибка при создании Hibernate SessionFactory");
-            }
+            return configuration.buildSessionFactory(serviceRegistry);
+        } catch (Exception e) {
+            throw new RuntimeException("Ошибка при создании Hibernate SessionFactory", e);
         }
+    }
+
+    public SessionFactory getSessionFactory() {
         return sessionFactory;
     }
 
@@ -55,7 +57,7 @@ public class Util {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             return DriverManager.getConnection(URL, USERNAME, PASSWORD);
-        } catch (Exception e) {
+        } catch (ClassNotFoundException | SQLException e) {
             throw new RuntimeException("Error during DB connection setup", e);
         }
     }
