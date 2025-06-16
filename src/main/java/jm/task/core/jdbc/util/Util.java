@@ -17,34 +17,43 @@ public class Util {
     private static final String USERNAME = "Sizofff1984";
     private static final String PASSWORD = "V!ctoria19891906";
 
-    private static SessionFactory sessionFactory;
+    private final SessionFactory sessionFactory;
+    private static Util instance;
 
-    public static synchronized SessionFactory getSessionFactory() {
-        if (sessionFactory == null) {
-            try {
-                Configuration configuration = new Configuration();
-                Properties settings = new Properties();
+    private Util() {
+        try {
+            Configuration configuration = new Configuration();
+            Properties settings = new Properties();
 
-                settings.put(Environment.DRIVER, "com.mysql.cj.jdbc.Driver");
-                settings.put(Environment.URL, URL);
-                settings.put(Environment.USER, USERNAME);
-                settings.put(Environment.PASS, PASSWORD);
-                settings.put(Environment.DIALECT, "org.hibernate.dialect.MySQL8Dialect");
-                settings.put(Environment.SHOW_SQL, "true");
-                settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
-                settings.put(Environment.HBM2DDL_AUTO, "update");
+            settings.put(Environment.DRIVER, "com.mysql.cj.jdbc.Driver");
+            settings.put(Environment.URL, URL);
+            settings.put(Environment.USER, USERNAME);
+            settings.put(Environment.PASS, PASSWORD);
+            settings.put(Environment.DIALECT, "org.hibernate.dialect.MySQL8Dialect");
+            settings.put(Environment.SHOW_SQL, "true");
+            settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
+            settings.put(Environment.HBM2DDL_AUTO, "update");
 
-                configuration.setProperties(settings);
-                configuration.addAnnotatedClass(User.class);
+            configuration.setProperties(settings);
+            configuration.addAnnotatedClass(User.class);
 
-                ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
-                        .applySettings(configuration.getProperties()).build();
+            ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
+                    .applySettings(configuration.getProperties()).build();
 
-                sessionFactory = configuration.buildSessionFactory(serviceRegistry);
-            } catch (Exception e) {
-                throw new RuntimeException("Ошибка при создании Hibernate SessionFactory", e);
-            }
+            this.sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+        } catch (Exception e) {
+            throw new RuntimeException("Ошибка при создании Hibernate SessionFactory", e);
         }
+    }
+
+    public static Util getInstance() {
+        if (instance == null) {
+            instance = new Util();
+        }
+        return instance;
+    }
+
+    public SessionFactory getSessionFactory() {
         return sessionFactory;
     }
 
