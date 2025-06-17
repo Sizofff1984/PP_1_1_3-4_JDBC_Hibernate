@@ -23,7 +23,7 @@ public class UserDaoJDBCImpl implements UserDao {
     private final Connection connection;
 
     public UserDaoJDBCImpl() {
-        this.connection = Util.getInstance().getConnection();
+        this.connection = new Util().getConnection();
     }
 
     @Override

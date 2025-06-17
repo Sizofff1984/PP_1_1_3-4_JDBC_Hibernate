@@ -22,7 +22,7 @@ public class UserDaoHibernateImpl implements UserDao {
     private final SessionFactory sessionFactory;
 
     public UserDaoHibernateImpl() {
-        this.sessionFactory = Util.getInstance().getSessionFactory();
+        this.sessionFactory = new Util().getSessionFactory();
     }
 
     @Override
